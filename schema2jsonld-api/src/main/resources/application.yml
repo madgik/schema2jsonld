@@ -1,0 +1,24 @@
+openaire:
+  documentretrieval:
+    publicationEndpoint: http://api.openaire.eu/search/publications?openairePublicationID={id}
+    softwareEndpoint: http://api.openaire.eu/search/software?openaireSoftwareID={id}
+    datasetEndpoint: http://api.openaire.eu/search/datasets?openaireDatasetID={id}
+    projectEndpoint: http://api.openaire.eu/search/projects?openaireProjectID={id}
+  portalaccess:
+    publicationEndpoint: https://www.openaire.eu/search/publication?articleId={id}
+    softwareEndpoint:
+    datasetEndpoint: https://www.openaire.eu/search/dataset?datasetId={id}
+    projectEndpoint: https://www.openaire.eu/search/project?projectId={id}
+ebimetagenomics:
+  documentretrieval:
+    studyEndpoint: https://www.ebi.ac.uk/metagenomics/api/latest/studies/{id}?format=application%2Fjson
+    sampleEndpoint: https://www.ebi.ac.uk/metagenomics/api/latest/samples/{id}?format=application%2Fjson
+  identifier:
+    schemaName: identifiers.org
+    urlTemaplate: http://identifiers.org/ena/{id}
+  portalaccess:
+    urlEndpoint: https://www.ebi.ac.uk/ena/data/view/{id}
+bluebridge:
+  documentretrieval:
+    token: <insert token here>
+    datasetEndpoint: http://catalogue-ws.d4science.org/catalogue-ws/rest/api/items/show?id={id}&gcube-token={token}
