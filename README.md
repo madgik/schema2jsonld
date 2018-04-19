@@ -1,6 +1,6 @@
 # schema2jsonld
 
-schema2jsonld is a tool for converting externally exposed metadata to [json-ld](https://json-ld.org/) structured documents.
+schema2jsonld is a tool for converting externally exposed metadata to schema.org(http://schema.org/) [json-ld](https://json-ld.org/) structured documents according to [EDMI](https://eoscpilot.eu/edmi-metadata-guidelines) (EOSC Datasets Minimum Information) metadata guidelines.
 
 ## Overview
 
