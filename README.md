@@ -20,6 +20,8 @@ The [EDMI](https://eoscpilot.eu/edmi-metadata-guidelines) (EOSC Datasets Minimum
 
 ## Usage
 
+### Web API
+
 The project is a simple Spring Boot application. You will need maven (link) to build it and java (link) to run it. To try it, just clone / download the source code, open you command prompt and type
 `$ cd schema2jsonld-api`
 `$ mvn clean package`
@@ -28,6 +30,12 @@ The project is a simple Spring Boot application. You will need maven (link) to b
 Now you have your service running. Open up a browser / postman / curl and point it to perform a simple `GET` to `http://localhost:8080/json-ld/openaire/publication@dedup_wf_001::b8cea2465152e2ae541f56593604d2fc`
 
 You will see the json-ld schema.org/Dataset markup for the publication exposed through OpenAIRE's portal `https://www.openaire.eu/search/publication?articleId=dedup_wf_001::b8cea2465152e2ae541f56593604d2fc`
+
+### Angular App
+
+There is also an angular app that displays tight coupling of an application that injects the json-ld document generation into its client side code. This is to demonstrate tighter coupling and provides a simple, proof of consept javascript implementation of the document parsing process.
+
+The app is build with angular-cli so just run ng-serve, open up your browser, click on the button and see the generated json-ld
 
 ## Profiles
 
