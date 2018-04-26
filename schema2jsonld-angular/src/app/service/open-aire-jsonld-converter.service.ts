@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { JsonldDocument, Identifier, Creator, Person, License } from "../model/jsonld-document";
+import { JsonldDocument, Identifier, Person, License, Citation } from "../model/jsonld-document";
 import * as _ from "lodash";
 
 @Injectable()
@@ -12,11 +12,11 @@ export class OpenAireJsonldConverterService {
 		doc.title = this.getTitle(result);
 		doc.description = this.getDescription(result);
 		doc.identifier = this.getIdentifier(result);
-		doc.url = ["https://beta.explore.openaire.eu/search/publication?articleId=dedup_wf_001::577a25a49d82be67476edc87f3a503a2"]; //ehm... :)
+		doc.url = ["https://beta.explore.openaire.eu/search/publication?articleId=dedup_wf_001::b8cea2465152e2ae541f56593604d2fc"]; //ehm... :)
 		doc.sameAs = this.getSameAs(result);
 		doc.creator = this.getCreator(result);
 		doc.dateCreated = this.getDateCreated(result);
-		doc.citation = null;
+		doc.citation = this.getCitation(result);
 		doc.license = this.getLicense(result);
 		doc.keyword = this.getKeyword(result);
 
@@ -96,10 +96,16 @@ export class OpenAireJsonldConverterService {
 		for (var i = 0; i < instanceArray.length; i += 1) {
 			const webresources = _.get(instanceArray[i], "webresource", null);
 			if (!webresources) continue;
-			if (!Array.isArray(webresources)) continue;
-			const webresourceArray = webresources as Array<any>;
-			for (var q = 0; q < webresourceArray.length; q += 1) {
-				const url = _.get(webresourceArray[q], "url", null);
+			if (Array.isArray(webresources)) {
+				const webresourceArray = webresources as Array<any>;
+				for (var q = 0; q < webresourceArray.length; q += 1) {
+					const url = _.get(webresourceArray[q], "url", null);
+					if (!url) continue;
+					array.push(url as String);
+				}
+			}
+			else {
+				const url = _.get(webresources, "url", null);
 				if (!url) continue;
 				array.push(url as String);
 			}
@@ -129,10 +135,10 @@ export class OpenAireJsonldConverterService {
 		return array;
 	}
 
-	private getCreator(result: any): Creator[] {
+	private getCreator(result: any): Person[] {
 		const item = _.get(result, "result.metadata.oaf:entity.oaf:result.creator", null);
 		if (!item) return null;
-		const array = new Array<Creator>();
+		const array = new Array<Person>();
 		if (Array.isArray(item)) {
 			const itemArray = item as Array<any>;
 			for (var i = 0; i < itemArray.length; i += 1) {
@@ -149,13 +155,71 @@ export class OpenAireJsonldConverterService {
 	}
 
 	private getSinglePerson(item: any): Person {
-		if (!_.has(item, "surname")) return null;
-		if (!_.has(item, "content")) return null;
+		if (!_.has(item, "surname") && !_.has(item, "name") && !_.has(item, "content")) return null;
 		return {
 			familyName: _.get(item, "surname", null),
 			givenName: _.get(item, "name", null),
 			name: _.get(item, "content", null)
 		};
 	}
+
+	private getCitation(result: any): Citation[] {
+		const item = _.get(result, "result.metadata.oaf:entity.extraInfo.citations.citation", null);
+		if (!item) return null;
+		const array = new Array<Citation>();
+		if (Array.isArray(item)) {
+			const itemArray = item as Array<any>;
+			for (var i = 0; i < itemArray.length; i += 1) {
+				const val = this.getSingleCitation(itemArray[i]);
+				if (val) array.push(val);
+			}
+		}
+		else {
+			const val = this.getSingleCitation(item);
+			if (val) array.push(val);
+		}
+		if (array.length == 0) return null;
+		return array;
+	}
+
+	private getSingleCitation(item: any): Citation {
+		if (!_.has(item, "rawText")) return null;
+		if (!_.has(item, "id")) return null;
+
+		const array = new Array<Identifier>();
+
+		const ids = _.get(item, "id", null);
+		if (Array.isArray(ids)) {
+			const idsArray = ids as Array<any>;
+
+			for (var i = 0; i < idsArray.length; i += 1) {
+				const type = _.get(idsArray[i], "type", null);
+				const value = _.get(idsArray[i], "value", null);
+				if (!type || !value) continue;
+				array.push({
+					id: value,
+					schema: type
+				});
+			}
+		}
+		else {
+			const type = _.get(ids, "type", null);
+			const value = _.get(ids, "value", null);
+			if (type && value) {
+				array.push({
+					id: value,
+					schema: type
+				});
+			}
+		}
+
+		if (array.length == 0) return null;
+
+		return {
+			title: [_.get(item, "rawText")],
+			identifier: array
+		};
+	}
+
 
 }

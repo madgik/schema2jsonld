@@ -4,7 +4,7 @@ export class JsonldDocument {
 	identifier: Identifier[];
 	url: String[];
 	sameAs: String[];
-	creator: Creator[];
+	creator: Person[];
 	dateCreated: String[];
 	dateModified: String[];
 	citation: Citation[];
@@ -17,17 +17,10 @@ export interface Identifier {
 	id?: string;
 }
 
-export interface Creator {
-}
-
-export interface Person extends Creator {
-	givenName?: string;
-	familyName?: string;
-	name?: string;
-}
-
-export interface Organization extends Creator {
-	name?: string;
+export interface Person {
+	givenName: string;
+	familyName: string;
+	name: string;
 }
 
 export class Citation {
