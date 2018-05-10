@@ -36,6 +36,7 @@ You will see the json-ld schema.org/Dataset markup for the publication exposed t
 There is also an angular app that displays tight coupling of an application that injects the json-ld document generation into its client side code. This is to demonstrate tighter coupling and provides a simple, proof of consept javascript implementation of the document parsing process.
 
 The app is build with angular-cli so just run ng-serve, open up your browser, click on the button and see the generated json-ld
+> the app is build using angular-cli version 1.7.4. If you are having problems building the app, please drop a line on the issues for assistance
 
 ## Profiles
 
