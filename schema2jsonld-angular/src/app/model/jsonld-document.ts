@@ -4,6 +4,7 @@ export class JsonldDocument {
 	identifier: Identifier[];
 	url: String[];
 	sameAs: String[];
+	version: String[];
 	creator: Person[];
 	dateCreated: String[];
 	dateModified: String[];

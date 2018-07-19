@@ -24,6 +24,13 @@ export class JsonldDocumentSerializerService {
 			buffer["description"] = doc.description;
 		}
 
+		if (doc.version && doc.version.length == 1) {
+			buffer["version"] = doc.version[0];
+		}
+		else if (doc.version && doc.version.length > 1) {
+			buffer["version"] = doc.version;
+		}
+
 		if (doc.identifier && doc.identifier.length == 1) {
 			buffer["identifier"] = this.buildIdentifier(doc.identifier[0]);
 		}

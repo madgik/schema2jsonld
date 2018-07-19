@@ -12,4 +12,19 @@ export class DocumentRetrivalService {
 		return this.http.get<any>(endpoint);
 	}
 
+	getSoftware(id: string): Observable<any> {
+		const endpoint = environment.softwareRetrievalEndpoint.replace("{ID}", id);
+		return this.http.get<any>(endpoint);
+	}
+
+	getDataset(id: string): Observable<any> {
+		const endpoint = environment.datasetRetrievalEndpoint.replace("{ID}", id);
+		return this.http.get<any>(endpoint);
+	}
+
+	getProject(id: string): Observable<any> {
+		const endpoint = environment.projectRetrievalEndpoint.replace("{ID}", id);
+		return this.http.get<any>(endpoint);
+	}
+
 }

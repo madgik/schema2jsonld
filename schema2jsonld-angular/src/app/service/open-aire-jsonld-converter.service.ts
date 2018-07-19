@@ -21,19 +21,87 @@ export class OpenAireJsonldConverterService {
 		doc.dateCreated = this.getDateCreated(result);
 		doc.citation = this.getCitation(result);
 		doc.license = this.getLicense(result);
-		doc.keyword = this.getKeyword(result);
+		doc.keyword = this.getKeywords(result);
+
+		return doc;
+	}
+
+	convertSoftware(id: string, result: any): JsonldDocument {
+		const doc = new JsonldDocument();
+
+		const endpoint = environment.softwarePortalEndpoint.replace("{ID}", id);
+
+		doc.title = this.getTitle(result);
+		doc.description = this.getDescription(result);
+		doc.identifier = this.getIdentifier(result);
+		doc.url = [endpoint];
+		doc.sameAs = this.getSameAs(result);
+		doc.creator = this.getCreator(result);
+		doc.dateCreated = this.getDateCreated(result);
+		doc.citation = this.getCitation(result);
+		doc.license = this.getLicense(result);
+		doc.keyword = this.getKeywords(result);
+
+		return doc;
+	}
+
+	convertDataset(id: string, result: any): JsonldDocument {
+		const doc = new JsonldDocument();
+
+		const endpoint = environment.datasetPortalEndpoint.replace("{ID}", id);
+
+		doc.title = this.getTitle(result);
+		doc.description = this.getDescription(result);
+		doc.identifier = this.getIdentifier(result);
+		doc.version = this.getVersion(result);
+		doc.url = [endpoint];
+		doc.sameAs = this.getSameAs(result);
+		doc.creator = this.getCreator(result);
+		doc.dateCreated = this.getDateCreated(result);
+		doc.citation = this.getCitation(result);
+		doc.license = this.getLicense(result);
+		doc.keyword = this.getKeywords(result);
+
+		return doc;
+	}
+
+	convertProject(id: string, result: any): JsonldDocument {
+		const doc = new JsonldDocument();
+
+		const endpoint = environment.projectPortalEndpoint.replace("{ID}", id);
+
+		doc.title = this.getProjectTitle(result);
+		doc.identifier = this.getProjectIdentifier(result);
+		doc.url = [endpoint];
+		doc.keyword = this.getProjectKeywords(result);
 
 		return doc;
 	}
 
 	private getTitle(result: any): String[] {
-		const item = _.get(result, "result.metadata.oaf:entity.oaf:result.title.content", null);
+		const path = "result.metadata.oaf:entity.oaf:result.title.content";
+		return this.getTitleInternal(path, result);
+	}
+
+	private getProjectTitle(result: any): String[] {
+		const path = "result.metadata.oaf:entity.oaf:project.title";
+		return this.getTitleInternal(path, result);
+	}
+
+	private getTitleInternal(path: string, result: any): String[] {
+		const item = _.get(result, path, null);
 		if (!item) return null;
 		return [item as String];
 	}
 
 	private getDescription(result: any): String[] {
 		const item = _.get(result, "result.metadata.oaf:entity.oaf:result.description", null);
+		if (!item) return null;
+		return [item as String];
+	}
+
+	private getVersion(result: any): String[] {
+		const item = _.get(result, "result.metadata.oaf:entity.oaf:result.version", null);
 		if (!item) return null;
 		return [item as String];
 	}
@@ -60,8 +128,18 @@ export class OpenAireJsonldConverterService {
 		}];
 	}
 
+	private getProjectIdentifier(result: any): Identifier[] {
+		const path = "result.metadata.oaf:entity.oaf:project.pid";
+		return this.getIdentifierInternal(path, result);
+	}
+
 	private getIdentifier(result: any): Identifier[] {
-		const item = _.get(result, "result.metadata.oaf:entity.oaf:result.pid", null);
+		const path = "result.metadata.oaf:entity.oaf:result.pid";
+		return this.getIdentifierInternal(path, result);
+	}
+
+	private getIdentifierInternal(path: string, result: any): Identifier[] {
+		const item = _.get(result, path, null);
 		if (!item) return null;
 		const array = new Array<Identifier>();
 		if (Array.isArray(item)) {
@@ -89,9 +167,13 @@ export class OpenAireJsonldConverterService {
 	}
 
 	private getSameAs(result: any): String[] {
-		const instances = _.get(result, "result.metadata.oaf:entity.oaf:result.children.instance", null);
+		var instances = _.get(result, "result.metadata.oaf:entity.oaf:result.children.instance", null);
 		if (!instances) return null;
-		if (!Array.isArray(instances)) return null;
+		if (!Array.isArray(instances)) {
+			const tmpInstances = new Array();
+			tmpInstances.push(instances);
+			instances = tmpInstances;
+		}
 
 		const array = new Array<String>();
 
@@ -117,10 +199,63 @@ export class OpenAireJsonldConverterService {
 		return array;
 	}
 
-	private getKeyword(result: any): String[] {
-		const subjects = _.get(result, "result.metadata.oaf:entity.oaf:result.subject", null);
+	private getProjectKeywords(result: any): String[] {
+		var subjects = _.get(result, "result.metadata.oaf:entity.oaf:project.subjects", null);
+		if (!subjects) {
+			subjects = new Array();
+		}
+		else {
+			if (!Array.isArray(subjects)) {
+				const tmpSubjects = new Array();
+				tmpSubjects.push(subjects);
+				subjects = tmpSubjects;
+			}
+		}
+
+		const array = new Array<String>();
+
+		const subjectArray = subjects as Array<any>;
+		for (var i = 0; i < subjectArray.length; i += 1) {
+			const classid = _.get(subjectArray[i], "classid", null);
+			if (classid !== "keyword") continue;
+
+			const sub = _.get(subjectArray[i], "content", null);
+			if (!sub) continue;
+
+			array.push(sub as String);
+		}
+
+		var keywords = _.get(result, "result.metadata.oaf:entity.oaf:project.keywords", null);
+		if (!keywords) {
+			keywords = new Array();
+		}
+		else {
+			if (!Array.isArray(keywords)) {
+				const tmpKeywords = new Array();
+				tmpKeywords.push(keywords);
+				keywords = tmpKeywords;
+			}
+		}
+
+		const keywordArray = keywords as Array<any>;
+		for (var i = 0; i < keywordArray.length; i += 1) {
+			const sub = keywordArray[i];
+			if (!sub) continue;
+			array.push(sub);
+		}
+
+		if (array.length == 0) return null;
+		return array;
+	}
+
+	private getKeywords(result: any): String[] {
+		var subjects = _.get(result, "result.metadata.oaf:entity.oaf:result.subject", null);
 		if (!subjects) return null;
-		if (!Array.isArray(subjects)) return null;
+		if (!Array.isArray(subjects)) {
+			const tmpSubjects = new Array();
+			tmpSubjects.push(subjects);
+			subjects = tmpSubjects;
+		}
 
 		const array = new Array<String>();
 

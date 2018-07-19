@@ -25,4 +25,25 @@ export class AppComponent {
 			this.doc = this.documentSerializer.serialize(docOvject);
 		});
 	}
+
+	public getSoftware() {
+		this.documentRetrieval.getSoftware('____EGIAppDB::8065d22be3ec33088913b9b97cf155ed').subscribe(x => {
+			const docOvject = this.documentParser.convertSoftware('____EGIAppDB::8065d22be3ec33088913b9b97cf155ed', x);
+			this.doc = this.documentSerializer.serialize(docOvject);
+		});
+	}
+
+	public getDataset() {
+		this.documentRetrieval.getDataset('datacite____::6a2d98e203ece74516a94a8abf280c9f').subscribe(x => {
+			const docOvject = this.documentParser.convertDataset('datacite____::6a2d98e203ece74516a94a8abf280c9f', x);
+			this.doc = this.documentSerializer.serialize(docOvject);
+		});
+	}
+
+	public getProject() {
+		this.documentRetrieval.getProject('nih_________::bc9b6366557df17ae199d49d30507ce0').subscribe(x => {
+			const docOvject = this.documentParser.convertProject('nih_________::bc9b6366557df17ae199d49d30507ce0', x);
+			this.doc = this.documentSerializer.serialize(docOvject);
+		});
+	}
 }
