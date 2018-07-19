@@ -1,18 +1,21 @@
 import { Injectable } from "@angular/core";
 import { JsonldDocument, Identifier, Person, License, Citation } from "../model/jsonld-document";
 import * as _ from "lodash";
+import { environment } from "../../environments/environment";
 
 @Injectable()
 export class OpenAireJsonldConverterService {
 	constructor() { }
 
-	convertPublication(result: any): JsonldDocument {
+	convertPublication(id: string, result: any): JsonldDocument {
 		const doc = new JsonldDocument();
+
+		const endpoint = environment.publicationPortalEndpoint.replace("{ID}", id);
 
 		doc.title = this.getTitle(result);
 		doc.description = this.getDescription(result);
 		doc.identifier = this.getIdentifier(result);
-		doc.url = ["https://beta.explore.openaire.eu/search/publication?articleId=dedup_wf_001::b8cea2465152e2ae541f56593604d2fc"]; //ehm... :)
+		doc.url = [endpoint];
 		doc.sameAs = this.getSameAs(result);
 		doc.creator = this.getCreator(result);
 		doc.dateCreated = this.getDateCreated(result);

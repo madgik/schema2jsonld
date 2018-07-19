@@ -20,8 +20,8 @@ export class AppComponent {
 		private documentSerializer: JsonldDocumentSerializerService) { }
 
 	public getPublication() {
-		this.documentRetrieval.getPublication().subscribe(x => {
-			const docOvject = this.documentParser.convertPublication(x);
+		this.documentRetrieval.getPublication('dedup_wf_001::b8cea2465152e2ae541f56593604d2fc').subscribe(x => {
+			const docOvject = this.documentParser.convertPublication('dedup_wf_001::b8cea2465152e2ae541f56593604d2fc', x);
 			this.doc = this.documentSerializer.serialize(docOvject);
 		});
 	}

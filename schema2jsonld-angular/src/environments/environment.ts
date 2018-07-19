@@ -4,5 +4,7 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const environment = {
-  production: false
+	production: false,
+	publicationRetrievalEndpoint: 'https://beta.services.openaire.eu/search/v2/api/publications/{ID}?format=json',
+	publicationPortalEndpoint: 'https://beta.explore.openaire.eu/search/publication?articleId={ID}'
 };
