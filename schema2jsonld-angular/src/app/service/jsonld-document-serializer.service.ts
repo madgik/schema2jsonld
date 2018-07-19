@@ -86,10 +86,10 @@ export class JsonldDocumentSerializerService {
 		}
 
 		if (doc.keyword && doc.keyword.length == 1) {
-			buffer["keyword"] = doc.keyword[0];
+			buffer["keywords"] = doc.keyword[0];
 		}
 		else if (doc.keyword && doc.keyword.length > 1) {
-			buffer["keyword"] = _.join(doc.keyword, ", ");
+			buffer["keywords"] = _.join(doc.keyword, ", ");
 		}
 
 		if (doc.citation && doc.citation.length == 1) {
